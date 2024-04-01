@@ -24,30 +24,26 @@ function createCard(obj) {
     let titleDiv = newDiv();
     titleDiv.classList.add("title");
     titleDiv.textContent = obj.title;
-    cardDiv.appendChild(titleDiv);
     let authorDiv = newDiv();
     authorDiv.textContent = `Author: ${obj.author}`;
-    cardDiv.appendChild(authorDiv);
     let publishedDiv = newDiv();
     publishedDiv.textContent = `Published in: ${obj.published}`;
-    cardDiv.appendChild(publishedDiv);
     let pagesDiv = newDiv();
     pagesDiv.textContent = `Pages: ${obj.pages}`;
-    cardDiv.appendChild(pagesDiv);
     let newBtn = document.createElement("button")
-    newBtn.addEventListener("click", () => {if (newBtn.textContent === "Read") newBtn.textContent = "Unread"
-                                            else if (newBtn.textContent === "Unread") newBtn.textContent = "Read"});
+    newBtn.addEventListener("click", () => {
+        if (newBtn.textContent === "Read") newBtn.textContent = "Unread"
+        else if (newBtn.textContent === "Unread") newBtn.textContent = "Read"
+    });
     newBtn.textContent = obj.readstatus;
-    cardDiv.appendChild(newBtn);
     let deleteBtn = document.createElement("button");
     deleteBtn.classList.add("delete");
     deleteBtn.textContent = "Remove";
     deleteBtn.addEventListener("click", () => container.removeChild(cardDiv));
-    cardDiv.appendChild(deleteBtn);
-    container.appendChild(cardDiv);
+    cardDiv.append(titleDiv, authorDiv, publishedDiv, pagesDiv, newBtn, deleteBtn);
+    container.append(cardDiv);
 }
 
-//create div
 function newDiv() {
     return document.createElement("div");
 }
@@ -59,8 +55,20 @@ let theshadowoverinnsmouth = new Book("The Shadow over Innsmouth", "H. P. Lovecr
 addBookToLibrary(theshadowoverinnsmouth);
 displayBook();
 
-document.querySelector("#open-form").addEventListener("click", () => document.querySelector("dialog").showModal());
+document.querySelector("#open-form").addEventListener("click", () => {
+    clearDialog();
+    document.querySelector("dialog").showModal();
+});
 document.querySelector("#close-form").addEventListener("click", () => document.querySelector("dialog").close());
+
+//Dialog box related
+function clearDialog() {
+    document.querySelector("#title").value = "";
+    document.querySelector("#author").value = "";
+    document.querySelector("#published").value = "";
+    document.querySelector("#pages").value = "";
+    document.querySelector("#toggle").textContent = "Read";
+}
 
 document.querySelector("#add-book").addEventListener("click", () => {
     let title = document.querySelector("#title").value;
@@ -68,8 +76,10 @@ document.querySelector("#add-book").addEventListener("click", () => {
     let published = document.querySelector("#published").value;
     let pages = document.querySelector("#pages").value;
     let readstatus = document.querySelector("#toggle").textContent;
-    addBookToLibrary(new Book(title, author, published, pages, readstatus));
-    createCard(myLibrary[myLibrary.length - 1]);
+    if (title !== "" && author !== "" && published !== "" && pages !== "") {
+        addBookToLibrary(new Book(title, author, published, pages, readstatus));
+        createCard(myLibrary[myLibrary.length - 1]);
+    }
 });
 
 //Form read/unread toggle button
